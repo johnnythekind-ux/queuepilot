@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { processAIJob } from "@/lib/jobs/aiProcessor";
 
 export async function POST() {
   const supabase = await createClient();
@@ -17,7 +18,8 @@ export async function POST() {
     );
   }
 
-  for (const job of jobs) {
+  await Promise.all(
+  jobs.map(async (job) => {
     await supabase
       .from("jobs")
       .update({
@@ -41,18 +43,39 @@ export async function POST() {
           updated_at: new Date().toISOString(),
         })
         .eq("id", job.id);
-    } else {
+
+      return;
+    }
+
+    try {
+      const result = await processAIJob({
+        title: job.title,
+        jobType: job.job_type,
+        input: job.input,
+      });
+
       await supabase
         .from("jobs")
         .update({
           status: "completed",
-          result: "Async worker completed this job successfully.",
+          result,
           completed_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })
         .eq("id", job.id);
+    } catch {
+      await supabase
+        .from("jobs")
+        .update({
+          status: "failed",
+          error_message: "OpenAI processing failed.",
+          failed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", job.id);
     }
-  }
+  })
+);
 
   return NextResponse.json({
     success: true,

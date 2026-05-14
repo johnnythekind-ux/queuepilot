@@ -37,8 +37,22 @@ export default function NewJobPage() {
               defaultValue="report_summary"
             >
               <option value="report_summary">Report Summary</option>
-              <option value="lead_review">Lead Review</option>
-              <option value="deal_check">Deal Check</option>
+
+<option value="lead_analysis">
+  Lead Analysis
+</option>
+
+<option value="cold_email_writer">
+  Cold Email Writer
+</option>
+
+<option value="property_score">
+  Property Score
+</option>
+
+<option value="seller_motivation">
+  Seller Motivation
+</option>
             </select>
           </div>
 
