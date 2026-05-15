@@ -42,7 +42,7 @@ const averageProcessingTime =
             (new Date(job.completed_at).getTime() -
               new Date(job.started_at).getTime()) /
               1000
-          );
+          );4
         }, 0) / completedWithTimes.length
       ).toFixed(1)
     : null;
@@ -251,7 +251,110 @@ const averageProcessingTime =
 })}
   </div>
 </div>
+<div
+  style={{
+    marginTop: "32px",
+    backgroundColor: "#081028",
+    border: "1px solid #1e293b",
+    borderRadius: "16px",
+    padding: "24px",
+  }}
+>
+  <h2
+    style={{
+      fontSize: "24px",
+      fontWeight: "bold",
+      marginBottom: "20px",
+    }}
+  >
+    Worker Health
+  </h2>
 
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+      gap: "16px",
+    }}
+  >
+    <div>
+      <p style={{ color: "#94a3b8" }}>Worker Mode</p>
+      <p style={{ fontWeight: "bold" }}>Simulated</p>
+    </div>
+
+    <div>
+      <p style={{ color: "#94a3b8" }}>Processing Style</p>
+      <p style={{ fontWeight: "bold" }}>Parallel</p>
+    </div>
+
+    <div>
+      <p style={{ color: "#94a3b8" }}>AI Engine</p>
+      <p style={{ fontWeight: "bold" }}>OpenAI</p>
+    </div>
+
+    <div>
+      <p style={{ color: "#94a3b8" }}>Queue Backend</p>
+      <p style={{ fontWeight: "bold" }}>Supabase Jobs Table</p>
+    </div>
+
+    <div>
+      <p style={{ color: "#94a3b8" }}>Refresh Mode</p>
+      <p style={{ fontWeight: "bold" }}>Auto Refresh</p>
+    </div>
+
+    <div>
+      <p style={{ color: "#94a3b8" }}>Max Jobs Per Run</p>
+      <p style={{ fontWeight: "bold" }}>5</p>
+    </div>
+  </div>
+</div>
+<div
+  style={{
+    marginTop: "32px",
+    backgroundColor: "#081028",
+    border: "1px solid #1e293b",
+    borderRadius: "16px",
+    padding: "24px",
+  }}
+>
+  <h2
+    style={{
+      fontSize: "24px",
+      fontWeight: "bold",
+      marginBottom: "20px",
+    }}
+  >
+    Queue Activity
+  </h2>
+
+  <div style={{ display: "grid", gap: "14px" }}>
+    {jobs?.slice(0, 6).map((job) => (
+      <div
+        key={job.id}
+        style={{
+          borderLeft: `4px solid ${
+            job.status === "completed"
+              ? "#22c55e"
+              : job.status === "failed"
+              ? "#ef4444"
+              : job.status === "processing"
+              ? "#facc15"
+              : "#64748b"
+          }`,
+          paddingLeft: "16px",
+        }}
+      >
+        <p style={{ fontWeight: "bold" }}>{job.title}</p>
+        <p style={{ color: "#94a3b8", fontSize: "14px" }}>
+          Status: {job.status} • Type: {job.job_type}
+        </p>
+        <p style={{ color: "#64748b", fontSize: "13px" }}>
+          Created {new Date(job.created_at).toLocaleString()}
+        </p>
+      </div>
+    ))}
+  </div>
+</div>
       </section>
     </main>
   );
