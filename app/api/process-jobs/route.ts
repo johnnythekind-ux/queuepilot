@@ -20,14 +20,21 @@ export async function POST() {
 
   await Promise.all(
   jobs.map(async (job) => {
-    await supabase
-      .from("jobs")
-      .update({
-        status: "processing",
-        started_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", job.id);
+    const { data: claimedJob, error: claimError } = await supabase
+  .from("jobs")
+  .update({
+    status: "processing",
+    started_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  })
+  .eq("id", job.id)
+  .in("status", ["queued", "retrying"])
+  .select()
+  .single();
+
+if (claimError || !claimedJob) {
+  return;
+}
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
