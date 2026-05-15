@@ -5,6 +5,18 @@ import { processAIJob } from "@/lib/jobs/aiProcessor";
 export async function POST() {
   const supabase = await createClient();
 
+  const processingTimeout = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+
+await supabase
+  .from("jobs")
+  .update({
+    status: "retrying",
+    error_message: "Job timed out while processing and was returned to retry queue.",
+    updated_at: new Date().toISOString(),
+  })
+  .eq("status", "processing")
+  .lt("updated_at", processingTimeout);
+
   const { data: jobs, error } = await supabase
     .from("jobs")
     .select("*")
