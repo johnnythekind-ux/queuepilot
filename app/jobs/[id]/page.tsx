@@ -56,9 +56,15 @@ export default async function JobPage({
   </div>
 )}
 
-{job.status === "failed" && (
+{job.status === "failed" && job.attempt_count < 3 && (
   <div className="mt-6">
     <RetryJobButton jobId={job.id} />
+  </div>
+)}
+
+{job.status === "failed" && job.attempt_count >= 3 && (
+  <div className="mt-6 rounded-lg border border-red-900 bg-red-950/40 px-4 py-3 text-red-300">
+    Retry limit reached. Manual review required.
   </div>
 )}
 

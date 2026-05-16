@@ -123,6 +123,20 @@ export async function retryJob(jobId: string) {
     redirect(`/jobs/${jobId}`);
   }
 
+  if (job.attempt_count >= 3) {
+  await supabase
+    .from("jobs")
+    .update({
+      error_message:
+        "Retry limit reached. This job requires manual review.",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", jobId)
+    .eq("user_id", user.id);
+
+  redirect(`/jobs/${jobId}`);
+}
+
   await supabase
     .from("jobs")
     .update({
