@@ -24,6 +24,11 @@ const completedJobs =
 const failedJobs =
   jobs?.filter((job) => job.status === "failed").length || 0;
 
+  const deadLetterJobs =
+  jobs?.filter(
+    (job) => job.status === "failed" && job.attempt_count >= 3
+  ) || [];
+
   const successRate =
   totalJobs > 0 ? Math.round((completedJobs / totalJobs) * 100) : 0;
 
@@ -251,6 +256,64 @@ const averageProcessingTime =
 })}
   </div>
 </div>
+
+<div
+  style={{
+    marginTop: "48px",
+    backgroundColor: "#1a0000",
+    border: "1px solid #7f1d1d",
+    borderRadius: "16px",
+    padding: "24px",
+  }}
+>
+  <h2
+    style={{
+      fontSize: "24px",
+      fontWeight: "bold",
+      marginBottom: "20px",
+      color: "#fca5a5",
+    }}
+  >
+    Dead Letter Queue
+  </h2>
+
+  {deadLetterJobs.length === 0 ? (
+    <p style={{ color: "#fca5a5" }}>
+      No jobs currently require manual review.
+    </p>
+  ) : (
+    <div style={{ display: "grid", gap: "16px" }}>
+      {deadLetterJobs.map((job) => (
+        <div
+          key={job.id}
+          style={{
+            border: "1px solid #7f1d1d",
+            borderRadius: "12px",
+            padding: "16px",
+            backgroundColor: "#2b0000",
+          }}
+        >
+          <div style={{ fontWeight: "bold", marginBottom: "8px" }}>
+            {job.title}
+          </div>
+
+          <div style={{ color: "#fca5a5", marginBottom: "6px" }}>
+            Status: {job.status}
+          </div>
+
+          <div style={{ color: "#fca5a5", marginBottom: "6px" }}>
+            Attempts: {job.attempt_count}
+          </div>
+
+          <div style={{ color: "#fca5a5" }}>
+            Requires manual intervention.
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
 <div
   style={{
     marginTop: "32px",
