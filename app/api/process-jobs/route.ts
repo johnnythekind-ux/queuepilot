@@ -5,6 +5,18 @@ import { processAIJob } from "@/lib/jobs/aiProcessor";
 export async function POST() {
   const supabase = await createClient();
 
+  const processingTimeout = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+
+await supabase
+  .from("jobs")
+  .update({
+    status: "retrying",
+    error_message: "Job timed out while processing and was returned to retry queue.",
+    updated_at: new Date().toISOString(),
+  })
+  .eq("status", "processing")
+  .lt("updated_at", processingTimeout);
+
   const { data: jobs, error } = await supabase
     .from("jobs")
     .select("*")
@@ -20,14 +32,21 @@ export async function POST() {
 
   await Promise.all(
   jobs.map(async (job) => {
-    await supabase
-      .from("jobs")
-      .update({
-        status: "processing",
-        started_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", job.id);
+    const { data: claimedJob, error: claimError } = await supabase
+  .from("jobs")
+  .update({
+    status: "processing",
+    started_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  })
+  .eq("id", job.id)
+  .in("status", ["queued", "retrying"])
+  .select()
+  .single();
+
+if (claimError || !claimedJob) {
+  return;
+}
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
