@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import RunWorkerButton from "@/components/RunWorkerButton";
 import AutoRefresh from "@/components/AutoRefresh";
+import AutoWorker from "@/components/AutoWorker";
 
 export default async function JobsPage() {
   const supabase = await createClient();
@@ -29,6 +30,7 @@ export default async function JobsPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <Header />
+      <AutoWorker />
       <AutoRefresh />
 
       <section className="mx-auto max-w-6xl px-6 py-12">

@@ -18,18 +18,31 @@ export async function createJob(formData: FormData) {
   const jobType = String(formData.get("job_type"));
   const input = String(formData.get("input"));
 
-  const { error } = await supabase.from("jobs").insert({
+  const { data: job, error } = await supabase
+  .from("jobs")
+  .insert({
     user_id: user.id,
     title,
     job_type: jobType,
     input,
     status: "queued",
     attempt_count: 0,
-  });
+  })
+  .select()
+  .single();
 
   if (error) {
     redirect("/jobs/new?error=create_failed");
   }
+
+  if (job) {
+  await supabase.from("job_events").insert({
+    user_id: user.id,
+    job_id: job.id,
+    event_type: "job_created",
+    message: `Job "${job.title}" was created and added to the queue.`,
+  });
+}
 
   redirect("/jobs");
 }

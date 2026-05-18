@@ -10,6 +10,12 @@ export default async function DashboardPage() {
   .from("jobs")
   .select("*");
 
+  const { data: jobEvents } = await supabase
+  .from("job_events")
+  .select("*")
+  .order("created_at", { ascending: false })
+  .limit(10);
+
   const totalJobs = jobs?.length || 0;
 
 const queuedJobs =
@@ -391,31 +397,46 @@ const averageProcessingTime =
   </h2>
 
   <div style={{ display: "grid", gap: "14px" }}>
-    {jobs?.slice(0, 6).map((job) => (
-      <div
-        key={job.id}
-        style={{
-          borderLeft: `4px solid ${
-            job.status === "completed"
-              ? "#22c55e"
-              : job.status === "failed"
-              ? "#ef4444"
-              : job.status === "processing"
-              ? "#facc15"
-              : "#64748b"
-          }`,
-          paddingLeft: "16px",
-        }}
-      >
-        <p style={{ fontWeight: "bold" }}>{job.title}</p>
-        <p style={{ color: "#94a3b8", fontSize: "14px" }}>
-          Status: {job.status} • Type: {job.job_type}
-        </p>
-        <p style={{ color: "#64748b", fontSize: "13px" }}>
-          Created {new Date(job.created_at).toLocaleString()}
-        </p>
-      </div>
-    ))}
+    {jobEvents?.map((event) => (
+  <div
+    key={event.id}
+    style={{
+      borderLeft:
+        event.event_type === "job_failed"
+          ? "4px solid #ef4444"
+          : event.event_type === "job_completed"
+          ? "4px solid #22c55e"
+          : "4px solid #3b82f6",
+      backgroundColor: "#0f172a",
+      padding: "16px",
+      borderRadius: "12px",
+      border: "1px solid #1e293b",
+    }}
+  >
+    <p style={{ fontWeight: "bold", marginBottom: "6px" }}>
+      {event.event_type}
+    </p>
+
+    <p
+      style={{
+        color: "#94a3b8",
+        fontSize: "14px",
+        marginBottom: "8px",
+      }}
+    >
+      {event.message}
+    </p>
+
+    <p
+      style={{
+        color: "#64748b",
+        fontSize: "12px",
+      }}
+    >
+      {new Date(event.created_at).toLocaleString()}
+    </p>
+  </div>
+))}
   </div>
 </div>
       </section>
