@@ -32,6 +32,12 @@ export default async function JobPage({
     .eq("id", id)
     .single();
 
+    const { data: jobEvents } = await supabase
+  .from("job_events")
+  .select("*")
+  .eq("job_id", id)
+  .order("created_at", { ascending: false });
+
   if (error || !job) {
     redirect("/jobs");
   }
@@ -141,6 +147,28 @@ export default async function JobPage({
             </pre>
           </div>
         </div>
+        <section className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+  <h2 className="mb-4 text-2xl font-bold">Job Timeline</h2>
+
+  <div className="grid gap-4">
+    {jobEvents && jobEvents.length > 0 ? (
+      jobEvents.map((event) => (
+        <div
+          key={event.id}
+          className="rounded-xl border border-slate-800 bg-slate-950 p-4"
+        >
+          <p className="font-bold">{event.event_type}</p>
+          <p className="mt-2 text-sm text-slate-400">{event.message}</p>
+          <p className="mt-2 text-xs text-slate-500">
+            {new Date(event.created_at).toLocaleString()}
+          </p>
+        </div>
+      ))
+    ) : (
+      <p className="text-slate-400">No timeline events yet.</p>
+    )}
+  </div>
+</section>
       </section>
     </main>
   );
