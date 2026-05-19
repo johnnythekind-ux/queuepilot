@@ -46,6 +46,15 @@ export default async function JobPage({
     <main className="min-h-screen bg-slate-950 text-white">
       <Header />
 
+      <div className="mx-auto max-w-4xl px-6 pt-6">
+  <a
+    href="/jobs"
+    className="text-sm text-slate-400 hover:text-white"
+  >
+    ← Back to Jobs
+  </a>
+</div>
+
       <section className="mx-auto max-w-4xl px-6 py-12">
         <div className="mb-8">
           <h1 className="mb-3 text-4xl font-bold">

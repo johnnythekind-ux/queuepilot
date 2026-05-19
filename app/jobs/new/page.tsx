@@ -69,12 +69,21 @@ export default function NewJobPage() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-500"
-          >
-            Create Job
-          </button>
+          <div className="flex gap-4">
+  <button
+    type="submit"
+    className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-500"
+  >
+    Create Job
+  </button>
+
+  <a
+    href="/jobs"
+    className="rounded-lg border border-slate-700 px-6 py-3 font-semibold text-slate-300 hover:bg-slate-800"
+  >
+    Cancel
+  </a>
+</div>
         </form>
       </section>
     </main>
