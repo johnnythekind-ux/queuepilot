@@ -8,7 +8,7 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-6 py-20">
         <div className="max-w-3xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-blue-400">
-            CRS Mechanical App #4
+            PRODUCTION-STYLE ASYNC PROCESSING
           </p>
 
           <h1 className="mb-6 text-5xl font-bold tracking-tight">
