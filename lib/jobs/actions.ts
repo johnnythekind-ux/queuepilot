@@ -161,6 +161,13 @@ export async function retryJob(jobId: string) {
     .eq("id", jobId)
     .eq("user_id", user.id);
 
+    await supabase.from("job_events").insert({
+  user_id: user.id,
+  job_id: jobId,
+  event_type: "job_retrying",
+  message: `Job retry was requested.`,
+});
+
   redirect(`/jobs/${jobId}`);
 }
 

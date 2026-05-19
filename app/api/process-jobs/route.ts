@@ -48,6 +48,13 @@ if (claimError || !claimedJob) {
   return;
 }
 
+await supabase.from("job_events").insert({
+  user_id: job.user_id,
+  job_id: job.id,
+  event_type: "job_processing",
+  message: `Job "${job.title}" entered processing.`,
+});
+
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const shouldFail = job.input.toLowerCase().includes("fail");
@@ -82,6 +89,14 @@ if (claimError || !claimedJob) {
           updated_at: new Date().toISOString(),
         })
         .eq("id", job.id);
+
+await supabase.from("job_events").insert({
+  user_id: job.user_id,
+  job_id: job.id,
+  event_type: "job_completed",
+  message: `Job "${job.title}" completed successfully.`,
+});
+
     } catch {
       await supabase
         .from("jobs")
@@ -92,6 +107,14 @@ if (claimError || !claimedJob) {
           updated_at: new Date().toISOString(),
         })
         .eq("id", job.id);
+
+await supabase.from("job_events").insert({
+  user_id: job.user_id,
+  job_id: job.id,
+  event_type: "job_failed",
+  message: `Job "${job.title}" failed during processing.`,
+});
+
     }
   })
 );
